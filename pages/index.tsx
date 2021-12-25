@@ -8,6 +8,8 @@ const {
   clusterApiUrl,
   PublicKey,
   LAMPORTS_PER_SOL,
+  Transaction, 
+  SystemProgram
 } = require("@solana/web3.js");
 
 import { useState } from "react"
@@ -16,7 +18,8 @@ import {
   Heading,
   Text,
   Button,
-  Box
+  Box,
+  Input
 } from "@chakra-ui/react"
 
 const solanaWeb3 = require('@solana/web3.js');
@@ -26,6 +29,8 @@ const solanaWeb3 = require('@solana/web3.js');
 const Home: NextPage = () => {
   const [account, setAccount] = useState<typeof Keypair>();
   const [balance, setBalance] = useState<Number>(0);
+  const [publicKey, setPublicKey] = useState<String>("")
+  const [privateKey, setPrivateKey] = useState<String>("")
   const [buttonStatus, setButtonStatus] = useState<boolean>(false)
   const [connection, setConnection] = useState();
 
@@ -35,10 +40,11 @@ const Home: NextPage = () => {
 
   const createAccount = () => {
     const keypair = Keypair.generate();
-    const initialBalance = 0;
-
+    console.log(Object.keys(keypair.secretKey))
     setAccount(keypair)
-
+    setPublicKey(keypair.publicKey.toBase58())
+    setPrivateKey(keypair.secretKey.toString())
+    setBalance(0)
   }
 
   const getBalance = async (publicKey: typeof PublicKey | undefined) => {
@@ -79,7 +85,17 @@ const Home: NextPage = () => {
         <Box display="flex" flexDirection="column" alignItems="center">
           <Flex w="100%" alignItems="center" justifyContent="flex-start" flexDirection="column">
             <Heading size="lg" p="0" mb="4" >Public Key</Heading>
-            <Text fontSize="lg" p="0" mb="8">{account?.publicKey.toBase58()}</Text>
+            <Text>
+              {publicKey}
+            </Text>
+          </Flex>
+
+
+          <Flex w="100%" alignItems="center" justifyContent="flex-start" flexDirection="column">
+            <Heading size="lg" p="0"  mb="4">Secret Key</Heading>
+            <Text>
+              {privateKey}
+            </Text>
           </Flex>
           <Flex w="100%" alignItems="center" justifyContent="flex-start" flexDirection="column">
             <Heading size="lg" p="0" mb="4" >Balance</Heading>
@@ -92,13 +108,14 @@ const Home: NextPage = () => {
             colorScheme="purple"
             mb="5"
             loadingText='Requesting Airdrop'
-            onClick={() => {requestAirdrop(account?.publicKey)}}
+            onClick={() => { requestAirdrop(account?.publicKey) }}
           >
             REQUEST AIRDROP
           </Button>
           <Button variant="outline" size="md" colorScheme="purple" onClick={createAccount}>
             CREATE NEW ACCOUNT
           </Button>
+
         </Box>
 
       </Flex>
@@ -107,3 +124,7 @@ const Home: NextPage = () => {
 }
 
 export default Home
+/*
+Av89JZDXnU8nfb5WZcsVasqWQnK2QHFik6m5TAp9ro2C
+GeKvZ6cXMrrzxYD8RbZnquUD3Wi3EomGRaiJWwTdG1zc
+*/
